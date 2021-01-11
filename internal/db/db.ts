@@ -7,5 +7,5 @@ const local = 'postgres://postgres:postgres@localhost:5432/postgres';
 const docker = 'postgres://docker:docker@localhost:5432/docker';
 
 const pgp = pgPromise({ promiseLib: promise });
-const db = pgp(local);
+const db = pgp(docker);
 export default db;
