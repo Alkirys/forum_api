@@ -85,7 +85,9 @@ CREATE OR REPLACE FUNCTION add_votes_to_count() RETURNS TRIGGER AS
 $add_votes_to_count$
 BEGIN
     UPDATE threads
-    SET votes = votes + new.vote
+    SET votes = votes + CASE WHEN NEW.vote = -1
+                              THEN -1
+                                ELSE 1 END
     WHERE id = new.thread;
 
     RETURN new;
@@ -95,8 +97,14 @@ $add_votes_to_count$ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION update_vote_in_count() RETURNS TRIGGER AS
 $update_vote_in_count$
 BEGIN
+    IF OLD.vote = NEW.vote
+      THEN
+    RETURN old;
+    END IF;
     UPDATE threads
-    SET votes = votes - old.vote + new.vote
+    SET votes = votes + CASE WHEN NEW.vote = -1
+                              THEN -2
+                                ELSE 2 END
     WHERE id = new.thread;
 
     RETURN new;
