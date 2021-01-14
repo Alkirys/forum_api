@@ -85,9 +85,7 @@ CREATE OR REPLACE FUNCTION add_votes_to_count() RETURNS TRIGGER AS
 $add_votes_to_count$
 BEGIN
     UPDATE threads
-    SET votes = votes + CASE WHEN NEW.vote = -1
-                              THEN -1
-                                ELSE 1 END
+    SET votes = votes + NEW.vote
     WHERE id = new.thread;
 
     RETURN new;

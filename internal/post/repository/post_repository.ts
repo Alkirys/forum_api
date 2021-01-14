@@ -4,20 +4,69 @@ import { Post } from '../models/post_models';
 class PostRepository
 {
     async insertInto(posts: Post[]): Promise<Post[]> {
+        // let query = 'INSERT INTO posts (author, forum, message, parent, thread, created) VALUES ';
+        // const date = new Date(Date.now()).toISOString();
+        //
+        // for (let post of posts) {
+        //     const tmpPost: {id: number} = await DB.one(query + `($1, $2, $3, $4, $5, $6)` + ' RETURNING id',
+        //         [post.authorId, post.forumId, post.message, post.parentId, post.threadId, date]);
+        //     post.id = tmpPost.id;
+        //     // post.parentId = tmpPost.parent;
+        //     post.created = date;
+        //     post.thread = post.threadId;
+        //     // console.log(post.parentId)
+        //     await DB.none(`INSERT INTO forums_users (user_id, forum_id) VALUES
+        //         ($1, $2) ON CONFLICT DO NOTHING`,
+        //         [post.authorId, post.forumId]);
+        // }
+        //
+        // return posts;
+
         let query = 'INSERT INTO posts (author, forum, message, parent, thread, created) VALUES ';
+        let args = [];
+        let argNumber = 1;
+        let queryUsers = 'INSERT INTO forums_users (user_id, forum_id) VALUES ';
+        let argsUsers = [];
+        let argUsersNumber = 1;
         const date = new Date(Date.now()).toISOString();
 
         for (let post of posts) {
-            const tmpPost: {id: number} = await DB.one(query + `($1, $2, $3, $4, $5, $6)` + ' RETURNING id',
-                [post.authorId, post.forumId, post.message, post.parentId, post.threadId, date]);
-            post.id = tmpPost.id;
-            // post.parentId = tmpPost.parent;
-            post.created = date;
-            post.thread = post.threadId;
-            // console.log(post.parentId)
-            await DB.none(`INSERT INTO forums_users (user_id, forum_id) VALUES
-                ($1, $2) ON CONFLICT DO NOTHING`,
-                [post.authorId, post.forumId]);
+            query += `(${'$' + argNumber}, ${'$' + (argNumber + 1)}, ${'$' + (argNumber + 2)}, ${'$' + (argNumber + 3)}, ${'$' + (argNumber + 4)}, ${'$' + (argNumber + 5)}),`;
+            argNumber += 6;
+            args.push(post.authorId, post.forumId, post.message, post.parentId, post.threadId, date);
+            queryUsers += `(${'$' + argUsersNumber}, ${'$' + (argUsersNumber + 1)}),`;
+            argUsersNumber += 3;
+            // console.log('AUTHOR_ID:', post.authorId);
+            // console.log('FORUM_ID:', post.forumId);
+            argsUsers.push(post.authorId, post.forumId);
+            // argsUsers.push(post.forumId);
+        }
+
+        try {
+            query = query.slice(0, -1);
+            const tmpPost: {id: number}[] = await DB.many(query + ' RETURNING id', args);
+            console.log('AUTHOR_ID:', tmpPost);
+            for (let i = 0; i < tmpPost.length; i++) {
+                posts[i].id = tmpPost[i].id;
+                // post.parentId = tmpPost.parent;
+                posts[i].created = date;
+                posts[i].thread = posts[i].threadId;
+                // console.log(post.parentId)
+            }
+        } catch (e) {
+            console.log(query + ' RETURNING id');
+            console.log(args);
+            console.log(e)
+        }
+
+        queryUsers = queryUsers.slice(0, -1);
+        queryUsers +=  ' ON CONFLICT DO NOTHING';
+        try {
+            await DB.none(queryUsers, argsUsers);
+        } catch (e) {
+            console.log(queryUsers);
+            console.log(argNumber);
+            console.log(e)
         }
 
         return posts;

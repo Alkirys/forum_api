@@ -89,7 +89,7 @@ class ThreadUsecase {
             }
             return null;
         } catch (e) {
-            // console.log(e)
+            console.log(e)
         }
     }
 
@@ -162,15 +162,12 @@ class ThreadUsecase {
         vote.userId = user.id;
 
         const result = await VoteRepository.insertInto(vote);
-        // console.log(result)
         if (result !== null) {
             oldThread.votes = await VoteRepository.getThreadVotes(oldThread.id);
-            // if (oldThread.votes > 0) {
             oldThread.forum = oldThread.slug;
             oldThread.slug = oldThread.coalesce;
             oldThread.author = oldThread.nickname;
             return oldThread;
-            // }
         }
         return null;
     }
