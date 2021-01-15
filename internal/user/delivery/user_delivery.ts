@@ -3,17 +3,10 @@ import { User } from '../models/user_models';
 
 class UserDelivery {
     async createUser(req, res) {
-        /*
-        CREATE USER
-        OPTIONS:
-        CREATED -> 201 RETURN USER
-        EMAIL EXISTST -> 409 RETURN EXISTING USER
-        NICKNAME EXISTS -> 409 RETURN EXISTSING USER
-        OTHER -> 400
-         */
         try {
             const nickname = req.params.nickname;
             const user = req.body;
+            // console.log('IN:', user);
             const users = await UserUsecase.addUser(nickname, user);
             if (users === null) {
                 res.code(500).send({ message: 'Bad Request' });
@@ -21,6 +14,7 @@ class UserDelivery {
             if (Array.isArray(users)) {
                 res.code(409).send(JSON.stringify(users));
             } else {
+                // console.log('OUT:', users);
                 res.code(201).send(users);
             }
         } catch (e) {
@@ -60,16 +54,12 @@ class UserDelivery {
     }
 
     async getUser(req, res) {
-        /*
-        GET USER
-        OPTIONS:
-        SUCCESS -> 200 RETURN USER
-        NOT FOUND -> 404 ERROR
-       */
         const nickname = req.params.nickname;
+
         const user = await UserUsecase.getByNickname(nickname);
+        // console.log('getUser(deliv):', user);
         if (user === null) {
-            res.code(404).send({ message: 'User doesn\'n exist'});
+            res.code(404).send({ message: 'User does not exist'});
         } else {
             res.code(200).send(user);
         }

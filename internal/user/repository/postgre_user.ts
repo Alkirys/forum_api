@@ -40,10 +40,11 @@ class UserRepository
         if (desc) {
             orderStr += ' DESC';
         }
-        if (limit !== 0) {
+        if (limit !== undefined && limit !== 0) {
             orderStr += ` LIMIT ${limit}`;
         }
         let args: (number | string)[] = [];
+
         args.push(id);
         // console.log(since)
         if (since !== undefined && since !== '') {
@@ -54,9 +55,10 @@ class UserRepository
             }
             args.push(since);
         }
-        // console.log(query + orderStr, args)
+        // console.log('QUERY:', query + orderStr, '\nARGS:', args)
+
         return DB.manyOrNone(query + orderStr, args)
-            .then((users: User[]) => {return users})
+            .then((users: User[]) => users)
             .catch(() => null);
     }
 

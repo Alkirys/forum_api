@@ -103,16 +103,17 @@ class ForumDelivery {
         const since = req.query.since;
         const desc = req.query.desc === 'true';
 
+        // console.log('PARAMS: slug - ', slug, 'limit - ', limit, 'since - ', since, 'desc - ', desc);
         try {
             const result = await ForumUsecase.getForumUsers(slug, limit, since, desc);
-            // console.log(' NOT OK ', result);
+            // console.log('getForumUsers(deliv) OK:', result);
             res.code(200).send(result);
         } catch (e: any) {
             switch (e.message) {
                 case FORUM_DOES_NOT_EXIST_ERROR:
                     res.code(404).send({ message: FORUM_DOES_NOT_EXIST_ERROR});
             }
-            // console.log(' NOT OK ', e);
+            // console.log('getForumUsers(deliv) ERR:', e);
         }
     }
 }

@@ -10,6 +10,7 @@ class UserUsecase {
 
         if (userByNickname !== null || userByEmail !== null) {
             let users: User[] = [];
+
             if (userByNickname !== null) {
                 users.push(userByNickname);
                 if (userByEmail !== null && userByEmail.nickname !== userByNickname.nickname) {
@@ -23,6 +24,7 @@ class UserUsecase {
 
         user.nickname = nickname;
         const isAllRight = await UserRepository.insertInto(user);
+
         if (!isAllRight) {
             return null;
         }

@@ -45,7 +45,7 @@ class PostRepository
         try {
             query = query.slice(0, -1);
             const tmpPost: {id: number}[] = await DB.many(query + ' RETURNING id', args);
-            console.log('AUTHOR_ID:', tmpPost);
+            // console.log('AUTHOR_ID:', tmpPost);
             for (let i = 0; i < tmpPost.length; i++) {
                 posts[i].id = tmpPost[i].id;
                 // post.parentId = tmpPost.parent;
@@ -54,9 +54,9 @@ class PostRepository
                 // console.log(post.parentId)
             }
         } catch (e) {
-            console.log(query + ' RETURNING id');
-            console.log(args);
-            console.log(e)
+            // console.log(query + ' RETURNING id');
+            // console.log(args);
+            // console.log(e)
         }
 
         queryUsers = queryUsers.slice(0, -1);
@@ -64,9 +64,9 @@ class PostRepository
         try {
             await DB.none(queryUsers, argsUsers);
         } catch (e) {
-            console.log(queryUsers);
-            console.log(argNumber);
-            console.log(e)
+            // console.log(queryUsers);
+            // console.log(argNumber);
+            // console.log(e)
         }
 
         return posts;

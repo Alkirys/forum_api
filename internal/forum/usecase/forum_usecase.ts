@@ -53,6 +53,7 @@ class ForumUsecase {
 
     async getForumUsers(slug: string, limit: number, since: string, desc: boolean): Promise<User[]> {
         const forum = await ForumRepository.getBySlug(slug);
+        // console.log(forum);
         if (forum === null) {
             throw new Error(FORUM_DOES_NOT_EXIST_ERROR);
         }

@@ -4,7 +4,7 @@ import { Status } from '../models/service_models';
 class ServiceDelivery {
     async getStatus(req, res) {
         const response = await ServiceUsecase.getStatus();
-        console.log(response)
+        // console.log(response)
         if (response === null) {
             res.code(400).send({ message: 'Bad Request' });
         } else {
