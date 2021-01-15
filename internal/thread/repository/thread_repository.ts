@@ -11,21 +11,15 @@ class ThreadRepository
     }
 
     insertInto(thread: Thread): Thread {
+        let date: string;
         if (thread.created === undefined) {
-            // let date = new Date(Date.now()).toISOString().replace('Z', '+03:00');
-            // console.log('////////////////////////',date)
-            return DB.one(`INSERT INTO threads (slug, author, title, message, forum) 
-            VALUES (NULLIF ($1, ''), $2, $3, $4, $5) RETURNING id`,
-                [thread.slug, thread.authorId, thread.title, thread.message, thread.forumId])
-                .then((res: {id: number}) => {
-                    thread.id = res.id;
-                    return thread;
-                })
-                .catch((e) =>  { return null});
+            date = new Date(Date.now()).toISOString();
+        } else {
+            date = thread.created;
         }
         return DB.one(`INSERT INTO threads (slug, author, title, message, forum, created) 
             VALUES (NULLIF ($1, ''), $2, $3, $4, $5, $6) RETURNING id`,
-            [thread.slug, thread.authorId, thread.title, thread.message, thread.forumId, thread.created])
+            [thread.slug, thread.authorId, thread.title, thread.message, thread.forumId, date])
             .then((res: {id: number}) => {
                 thread.id = res.id;
                 return thread;
