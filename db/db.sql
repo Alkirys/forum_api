@@ -158,19 +158,29 @@ CREATE TRIGGER add_forum_thread_user
 EXECUTE PROCEDURE add_forum_user_thread();
 
 CREATE INDEX idx_forums_users ON forums (admin);
+CREATE INDEX idx_forums_slug ON forums (lower(slug));
+
 CREATE INDEX idx_threads_forums ON threads (forum, created);
+CREATE INDEX idx_threads_id_slug ON threads (id, slug);
+CREATE INDEX idx_threads_slug_id ON threads (slug, id);
 CREATE INDEX idx_threads_users ON threads (author);
+CREATE INDEX idx_threads_slug ON threads (lower(slug));
+
 CREATE INDEX idx_posts_users ON posts (author);
 CREATE INDEX idx_posts_threads_created ON posts (thread, created);
 CREATE INDEX idx_posts_threads_path ON posts (thread, path);
+CREATE INDEX idx_posts_path_1 ON posts ((path[1]));
 CREATE INDEX idx_posts_threads_array ON posts (thread, (array_length(path, 1)));
+CREATE INDEX idx_posts_thread_path_1_path ON posts (thread, (path[1]), path);
+CREATE INDEX idx_posts_full ON posts (id, parent, thread, message, isEdited, created, forum, author) ;
 CREATE INDEX idx_posts_forum ON posts (forum);
+
 CREATE INDEX idx_votes_uesrs ON votes (author);
 CREATE INDEX idx_votes_thread ON votes (thread);
-CREATE INDEX idx_users_of_forums ON forums_users (forum_id, user_id);
-
-CREATE INDEX idx_forums_slug ON forums (lower(slug));
-CREATE INDEX idx_threads_slug ON threads (lower(slug));
-CREATE INDEX idx_user_nikcname ON users (lower(nickname));
-CREATE INDEX idx_posts_path_1 ON posts ((path[1]));
 CREATE INDEX idx_votes_thread_username ON votes (thread, author);
+
+CREATE INDEX idx_users_of_forums_forumID_userID ON forums_users (forum_id, user_id);
+CREATE INDEX idx_users_of_forums_userID_forumID ON forums_users (user_id, forum_id);
+
+CREATE INDEX idx_user_nickname ON users (lower(nickname));
+CREATE INDEX idx_user_id ON users (id);
